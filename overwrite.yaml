@@ -11,6 +11,7 @@
 # 可选：若日志证明非中国 UDP 443 有问题，可把下面一行放在 rules 最前面：
 # - AND,((RULE-SET,cn!_domain),(DST-PORT,443),(NETWORK,UDP)),REJECT
 # 本文件不设置 external-ui / external-ui-url，由 OpenClash 管理面板。
+# Gemini 独立分流：网页、API、AI Studio；优先于通用 AI / Google 规则。
 mode: rule
 mixed-port: 7890
 allow-lan: true
@@ -169,6 +170,32 @@ proxy-groups:
   - 🇯🇵 日本节点
   - 🇺🇸 美国节点
   - 🇸🇬 狮城节点
+  - 🇹🇼 台湾节点
+  - 🇮🇳 印度节点
+  - 🏷️ 亏本机场
+  - 🏷️ 赔钱机场
+  - ⚡ HY2 节点
+  - 🧩 VLESS 节点
+  - 🌐 全部节点
+  - DIRECT
+- name: ✨ Gemini
+  type: select
+  proxies:
+  - 🇺🇸 美国节点
+  - 🇯🇵 日本节点
+  - 🇸🇬 狮城节点
+  - 🔯 全局故转
+  - ♻️ 自动选择
+  - 🔯 日本故转
+  - 🔯 美国故转
+  - 🔯 狮城故转
+  - 🔯 台湾故转
+  - 🔯 印度故转
+  - ♻️ 日本自动
+  - ♻️ 美国自动
+  - ♻️ 狮城自动
+  - ♻️ 台湾自动
+  - ♻️ 印度自动
   - 🇹🇼 台湾节点
   - 🇮🇳 印度节点
   - 🏷️ 亏本机场
@@ -677,6 +704,7 @@ rules:
 - IP-CIDR,255.255.255.255/32,DIRECT,no-resolve
 - RULE-SET,private_ip,DIRECT,no-resolve
 - RULE-SET,private_domain,DIRECT
+- RULE-SET,gemini_domain,✨ Gemini
 - RULE-SET,ai_domain,🤖 AI
 - RULE-SET,youtube_domain,📹 YouTube
 - RULE-SET,google_domain,🍀 Google
@@ -936,3 +964,21 @@ rule-providers:
     url: https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/refs/heads/meta/geo/geoip/private.mrs
     path: ./rule_provider/qichiyuhub/private_ip.mrs
     proxy: 🚀 默认代理
+  gemini_domain:
+    type: inline
+    behavior: domain
+    payload:
+    - +.gemini.google.com
+    - +.gemini.google
+    - +.bard.google.com
+    - +.gemini.gstatic.com
+    - +.generativelanguage.googleapis.com
+    - geminiweb-pa.clients.google.com
+    - geminiweb-pa.clients6.google.com
+    - +.aistudio.google.com
+    - +.makersuite.google.com
+    - ai.google.dev
+    - alkalicore-pa.clients6.google.com
+    - alkalimakersuite-pa.clients6.google.com
+    - webchannel-alkalimakersuite-pa.clients6.google.com
+    - +.robinfrontend-pa.googleapis.com
