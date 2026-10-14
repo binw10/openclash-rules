@@ -1,0 +1,938 @@
+# OpenClash/Mihomo 双机场覆写配置 | 2026-10-14
+# 来源：qichiyuhub/rule/config/mihomo/config/overwrite.yaml（保留应用规则顺序）
+# 不含代理节点或订阅 URL；必须与自己的 proxies / proxy-providers 合并。
+# OpenClash 推荐 Fake-IP 非 TUN 模式；本文件禁止内核自行添加 TUN 路由。
+# 管理接口仅监听本机，按用户要求不设置密钥。LAN 面板访问请看配套说明。
+# 两个机场须在同一份最终配置中加载；同名节点必须在订阅转换时加唯一后缀。
+# 空地区/空机场组回退 REJECT，避免无节点时意外直连。
+# 健康检查仅验证 204 探测，不保证 AI/流媒体解锁；AI/Wallet 建议固定单节点。
+# QUIC 正常按应用分流；HY2 的节点传输和客户端 QUIC 流量是不同层次。
+# 全部规则集通过默认代理下载并缓存；首次启动需已有可用节点。
+# 可选：若日志证明非中国 UDP 443 有问题，可把下面一行放在 rules 最前面：
+# - AND,((RULE-SET,cn!_domain),(DST-PORT,443),(NETWORK,UDP)),REJECT
+# 本文件不设置 external-ui / external-ui-url，由 OpenClash 管理面板。
+mode: rule
+mixed-port: 7890
+allow-lan: true
+bind-address: '*'
+ipv6: false
+unified-delay: true
+tcp-concurrent: true
+log-level: info
+keep-alive-idle: 600
+keep-alive-interval: 15
+profile:
+  store-selected: true
+  store-fake-ip: true
+external-controller: 127.0.0.1:9090
+secret: ''
+sniffer:
+  enable: true
+  parse-pure-ip: false
+  sniff:
+    HTTP:
+      ports:
+      - 80
+      - 8080-8880
+      override-destination: false
+    TLS:
+      ports:
+      - 443
+      - 8443
+    QUIC:
+      ports:
+      - 443
+      - 8443
+  skip-domain:
+  - +.lan
+  - +.local
+  - Mijia Cloud
+  - +.push.apple.com
+tun:
+  enable: false
+  stack: mips
+  auto-route: false
+  auto-redirect: false
+  auto-detect-interface: false
+dns:
+  enable: true
+  listen: 127.0.0.1:7874
+  cache-algorithm: arc
+  ipv6: false
+  prefer-h3: false
+  use-hosts: true
+  use-system-hosts: true
+  enhanced-mode: fake-ip
+  fake-ip-range: 198.18.0.1/16
+  fake-ip-filter-mode: blacklist
+  fake-ip-filter:
+  - +.lan
+  - +.local
+  - +.home.arpa
+  - +.arpa
+  - localhost
+  - +.market.xiaomi.com
+  - +.msftconnecttest.com
+  - +.msftncsi.com
+  - time.*.com
+  - time.*.gov
+  - +.pool.ntp.org
+  - rule-set:private_domain
+  - rule-set:cn_domain
+  default-nameserver:
+  - 223.5.5.5
+  - 119.29.29.29
+  proxy-server-nameserver:
+  - https://dns.alidns.com/dns-query
+  - https://doh.pub/dns-query
+  direct-nameserver:
+  - https://dns.alidns.com/dns-query
+  - https://doh.pub/dns-query
+  direct-nameserver-follow-policy: false
+  nameserver:
+  - https://1.1.1.1/dns-query#🚀 默认代理
+  - https://8.8.8.8/dns-query#🚀 默认代理
+  nameserver-policy:
+    rule-set:cn_domain,private_domain:
+    - https://dns.alidns.com/dns-query
+    - https://doh.pub/dns-query
+proxy-groups:
+- name: 🚀 默认代理
+  type: select
+  proxies:
+  - 🔯 全局故转
+  - ♻️ 自动选择
+  - 🔯 日本故转
+  - 🔯 美国故转
+  - 🔯 狮城故转
+  - 🔯 台湾故转
+  - 🔯 印度故转
+  - ♻️ 日本自动
+  - ♻️ 美国自动
+  - ♻️ 狮城自动
+  - ♻️ 台湾自动
+  - ♻️ 印度自动
+  - 🇯🇵 日本节点
+  - 🇺🇸 美国节点
+  - 🇸🇬 狮城节点
+  - 🇹🇼 台湾节点
+  - 🇮🇳 印度节点
+  - 🏷️ 亏本机场
+  - 🏷️ 赔钱机场
+  - ⚡ HY2 节点
+  - 🧩 VLESS 节点
+  - 🌐 全部节点
+  - DIRECT
+- name: 📹 YouTube
+  type: select
+  proxies:
+  - 🚀 默认代理
+  - 🔯 全局故转
+  - ♻️ 自动选择
+  - 🔯 日本故转
+  - 🔯 美国故转
+  - 🔯 狮城故转
+  - 🔯 台湾故转
+  - 🔯 印度故转
+  - ♻️ 日本自动
+  - ♻️ 美国自动
+  - ♻️ 狮城自动
+  - ♻️ 台湾自动
+  - ♻️ 印度自动
+  - 🇯🇵 日本节点
+  - 🇺🇸 美国节点
+  - 🇸🇬 狮城节点
+  - 🇹🇼 台湾节点
+  - 🇮🇳 印度节点
+  - 🏷️ 亏本机场
+  - 🏷️ 赔钱机场
+  - ⚡ HY2 节点
+  - 🧩 VLESS 节点
+  - 🌐 全部节点
+  - DIRECT
+- name: 🍀 Google
+  type: select
+  proxies:
+  - 🚀 默认代理
+  - 🔯 全局故转
+  - ♻️ 自动选择
+  - 🔯 日本故转
+  - 🔯 美国故转
+  - 🔯 狮城故转
+  - 🔯 台湾故转
+  - 🔯 印度故转
+  - ♻️ 日本自动
+  - ♻️ 美国自动
+  - ♻️ 狮城自动
+  - ♻️ 台湾自动
+  - ♻️ 印度自动
+  - 🇯🇵 日本节点
+  - 🇺🇸 美国节点
+  - 🇸🇬 狮城节点
+  - 🇹🇼 台湾节点
+  - 🇮🇳 印度节点
+  - 🏷️ 亏本机场
+  - 🏷️ 赔钱机场
+  - ⚡ HY2 节点
+  - 🧩 VLESS 节点
+  - 🌐 全部节点
+  - DIRECT
+- name: 🤖 AI
+  type: select
+  proxies:
+  - 🇯🇵 日本节点
+  - 🇺🇸 美国节点
+  - 🇸🇬 狮城节点
+  - 🔯 全局故转
+  - ♻️ 自动选择
+  - 🔯 日本故转
+  - 🔯 美国故转
+  - 🔯 狮城故转
+  - 🔯 台湾故转
+  - 🔯 印度故转
+  - ♻️ 日本自动
+  - ♻️ 美国自动
+  - ♻️ 狮城自动
+  - ♻️ 台湾自动
+  - ♻️ 印度自动
+  - 🇹🇼 台湾节点
+  - 🇮🇳 印度节点
+  - 🏷️ 亏本机场
+  - 🏷️ 赔钱机场
+  - ⚡ HY2 节点
+  - 🧩 VLESS 节点
+  - 🌐 全部节点
+  - DIRECT
+- name: 👨🏿‍💻 GitHub
+  type: select
+  proxies:
+  - 🚀 默认代理
+  - 🔯 全局故转
+  - ♻️ 自动选择
+  - 🔯 日本故转
+  - 🔯 美国故转
+  - 🔯 狮城故转
+  - 🔯 台湾故转
+  - 🔯 印度故转
+  - ♻️ 日本自动
+  - ♻️ 美国自动
+  - ♻️ 狮城自动
+  - ♻️ 台湾自动
+  - ♻️ 印度自动
+  - 🇯🇵 日本节点
+  - 🇺🇸 美国节点
+  - 🇸🇬 狮城节点
+  - 🇹🇼 台湾节点
+  - 🇮🇳 印度节点
+  - 🏷️ 亏本机场
+  - 🏷️ 赔钱机场
+  - ⚡ HY2 节点
+  - 🧩 VLESS 节点
+  - 🌐 全部节点
+  - DIRECT
+- name: 🐬 OneDrive
+  type: select
+  proxies:
+  - 🚀 默认代理
+  - 🔯 全局故转
+  - ♻️ 自动选择
+  - 🔯 日本故转
+  - 🔯 美国故转
+  - 🔯 狮城故转
+  - 🔯 台湾故转
+  - 🔯 印度故转
+  - ♻️ 日本自动
+  - ♻️ 美国自动
+  - ♻️ 狮城自动
+  - ♻️ 台湾自动
+  - ♻️ 印度自动
+  - 🇯🇵 日本节点
+  - 🇺🇸 美国节点
+  - 🇸🇬 狮城节点
+  - 🇹🇼 台湾节点
+  - 🇮🇳 印度节点
+  - 🏷️ 亏本机场
+  - 🏷️ 赔钱机场
+  - ⚡ HY2 节点
+  - 🧩 VLESS 节点
+  - 🌐 全部节点
+  - DIRECT
+- name: 🪟 Microsoft
+  type: select
+  proxies:
+  - 🚀 默认代理
+  - 🔯 全局故转
+  - ♻️ 自动选择
+  - 🔯 日本故转
+  - 🔯 美国故转
+  - 🔯 狮城故转
+  - 🔯 台湾故转
+  - 🔯 印度故转
+  - ♻️ 日本自动
+  - ♻️ 美国自动
+  - ♻️ 狮城自动
+  - ♻️ 台湾自动
+  - ♻️ 印度自动
+  - 🇯🇵 日本节点
+  - 🇺🇸 美国节点
+  - 🇸🇬 狮城节点
+  - 🇹🇼 台湾节点
+  - 🇮🇳 印度节点
+  - 🏷️ 亏本机场
+  - 🏷️ 赔钱机场
+  - ⚡ HY2 节点
+  - 🧩 VLESS 节点
+  - 🌐 全部节点
+  - DIRECT
+- name: 🎵 TikTok
+  type: select
+  proxies:
+  - 🚀 默认代理
+  - 🔯 全局故转
+  - ♻️ 自动选择
+  - 🔯 日本故转
+  - 🔯 美国故转
+  - 🔯 狮城故转
+  - 🔯 台湾故转
+  - 🔯 印度故转
+  - ♻️ 日本自动
+  - ♻️ 美国自动
+  - ♻️ 狮城自动
+  - ♻️ 台湾自动
+  - ♻️ 印度自动
+  - 🇯🇵 日本节点
+  - 🇺🇸 美国节点
+  - 🇸🇬 狮城节点
+  - 🇹🇼 台湾节点
+  - 🇮🇳 印度节点
+  - 🏷️ 亏本机场
+  - 🏷️ 赔钱机场
+  - ⚡ HY2 节点
+  - 🧩 VLESS 节点
+  - 🌐 全部节点
+  - DIRECT
+- name: 📲 Telegram
+  type: select
+  proxies:
+  - 🚀 默认代理
+  - 🔯 全局故转
+  - ♻️ 自动选择
+  - 🔯 日本故转
+  - 🔯 美国故转
+  - 🔯 狮城故转
+  - 🔯 台湾故转
+  - 🔯 印度故转
+  - ♻️ 日本自动
+  - ♻️ 美国自动
+  - ♻️ 狮城自动
+  - ♻️ 台湾自动
+  - ♻️ 印度自动
+  - 🇯🇵 日本节点
+  - 🇺🇸 美国节点
+  - 🇸🇬 狮城节点
+  - 🇹🇼 台湾节点
+  - 🇮🇳 印度节点
+  - 🏷️ 亏本机场
+  - 🏷️ 赔钱机场
+  - ⚡ HY2 节点
+  - 🧩 VLESS 节点
+  - 🌐 全部节点
+  - DIRECT
+- name: 🎥 NETFLIX
+  type: select
+  proxies:
+  - 🚀 默认代理
+  - 🔯 全局故转
+  - ♻️ 自动选择
+  - 🔯 日本故转
+  - 🔯 美国故转
+  - 🔯 狮城故转
+  - 🔯 台湾故转
+  - 🔯 印度故转
+  - ♻️ 日本自动
+  - ♻️ 美国自动
+  - ♻️ 狮城自动
+  - ♻️ 台湾自动
+  - ♻️ 印度自动
+  - 🇯🇵 日本节点
+  - 🇺🇸 美国节点
+  - 🇸🇬 狮城节点
+  - 🇹🇼 台湾节点
+  - 🇮🇳 印度节点
+  - 🏷️ 亏本机场
+  - 🏷️ 赔钱机场
+  - ⚡ HY2 节点
+  - 🧩 VLESS 节点
+  - 🌐 全部节点
+  - DIRECT
+- name: 💶 Wallet
+  type: select
+  proxies:
+  - 🇯🇵 日本节点
+  - 🇺🇸 美国节点
+  - 🔯 全局故转
+  - ♻️ 自动选择
+  - 🔯 日本故转
+  - 🔯 美国故转
+  - 🔯 狮城故转
+  - 🔯 台湾故转
+  - 🔯 印度故转
+  - ♻️ 日本自动
+  - ♻️ 美国自动
+  - ♻️ 狮城自动
+  - ♻️ 台湾自动
+  - ♻️ 印度自动
+  - 🇸🇬 狮城节点
+  - 🇹🇼 台湾节点
+  - 🇮🇳 印度节点
+  - 🏷️ 亏本机场
+  - 🏷️ 赔钱机场
+  - ⚡ HY2 节点
+  - 🧩 VLESS 节点
+  - 🌐 全部节点
+  - DIRECT
+- name: 🎮 Steam
+  type: select
+  proxies:
+  - 🚀 默认代理
+  - 🔯 全局故转
+  - ♻️ 自动选择
+  - 🔯 日本故转
+  - 🔯 美国故转
+  - 🔯 狮城故转
+  - 🔯 台湾故转
+  - 🔯 印度故转
+  - ♻️ 日本自动
+  - ♻️ 美国自动
+  - ♻️ 狮城自动
+  - ♻️ 台湾自动
+  - ♻️ 印度自动
+  - 🇯🇵 日本节点
+  - 🇺🇸 美国节点
+  - 🇸🇬 狮城节点
+  - 🇹🇼 台湾节点
+  - 🇮🇳 印度节点
+  - 🏷️ 亏本机场
+  - 🏷️ 赔钱机场
+  - ⚡ HY2 节点
+  - 🧩 VLESS 节点
+  - 🌐 全部节点
+  - DIRECT
+- name: 🍎 Apple
+  type: select
+  proxies:
+  - 🚀 默认代理
+  - 🔯 全局故转
+  - ♻️ 自动选择
+  - 🔯 日本故转
+  - 🔯 美国故转
+  - 🔯 狮城故转
+  - 🔯 台湾故转
+  - 🔯 印度故转
+  - ♻️ 日本自动
+  - ♻️ 美国自动
+  - ♻️ 狮城自动
+  - ♻️ 台湾自动
+  - ♻️ 印度自动
+  - 🇯🇵 日本节点
+  - 🇺🇸 美国节点
+  - 🇸🇬 狮城节点
+  - 🇹🇼 台湾节点
+  - 🇮🇳 印度节点
+  - 🏷️ 亏本机场
+  - 🏷️ 赔钱机场
+  - ⚡ HY2 节点
+  - 🧩 VLESS 节点
+  - 🌐 全部节点
+  - DIRECT
+- name: 🐟 漏网之鱼
+  type: select
+  proxies:
+  - 🚀 默认代理
+  - 🔯 全局故转
+  - ♻️ 自动选择
+  - 🔯 日本故转
+  - 🔯 美国故转
+  - 🔯 狮城故转
+  - 🔯 台湾故转
+  - 🔯 印度故转
+  - ♻️ 日本自动
+  - ♻️ 美国自动
+  - ♻️ 狮城自动
+  - ♻️ 台湾自动
+  - ♻️ 印度自动
+  - 🇯🇵 日本节点
+  - 🇺🇸 美国节点
+  - 🇸🇬 狮城节点
+  - 🇹🇼 台湾节点
+  - 🇮🇳 印度节点
+  - 🏷️ 亏本机场
+  - 🏷️ 赔钱机场
+  - ⚡ HY2 节点
+  - 🧩 VLESS 节点
+  - 🌐 全部节点
+  - DIRECT
+- name: 🔯 全局故转
+  type: fallback
+  include-all: true
+  exclude-filter: (?i)(剩余流量|到期时间|套餐到期|订阅到期|流量重置|官网地址|官方地址|更新订阅|Traffic Remaining|Expire Date)
+  empty-fallback: REJECT
+  url: https://www.gstatic.com/generate_204
+  interval: 300
+  timeout: 5000
+  lazy: true
+  expected-status: 204
+- name: ♻️ 自动选择
+  type: url-test
+  include-all: true
+  exclude-filter: (?i)(剩余流量|到期时间|套餐到期|订阅到期|流量重置|官网地址|官方地址|更新订阅|Traffic Remaining|Expire Date)
+  empty-fallback: REJECT
+  url: https://www.gstatic.com/generate_204
+  interval: 300
+  timeout: 5000
+  lazy: true
+  expected-status: 204
+  tolerance: 50
+- name: 🇯🇵 日本节点
+  type: select
+  include-all: true
+  exclude-filter: (?i)(剩余流量|到期时间|套餐到期|订阅到期|流量重置|官网地址|官方地址|更新订阅|Traffic Remaining|Expire Date)
+  empty-fallback: REJECT
+  filter: (?i)(🇯🇵|(^|[^A-Za-z])JP([^A-Za-z]|$)|日本|Japan|Tokyo|Osaka)
+- name: 🔯 日本故转
+  type: fallback
+  include-all: true
+  exclude-filter: (?i)(剩余流量|到期时间|套餐到期|订阅到期|流量重置|官网地址|官方地址|更新订阅|Traffic Remaining|Expire Date)
+  empty-fallback: REJECT
+  filter: (?i)(🇯🇵|(^|[^A-Za-z])JP([^A-Za-z]|$)|日本|Japan|Tokyo|Osaka)
+  url: https://www.gstatic.com/generate_204
+  interval: 300
+  timeout: 5000
+  lazy: true
+  expected-status: 204
+- name: ♻️ 日本自动
+  type: url-test
+  include-all: true
+  exclude-filter: (?i)(剩余流量|到期时间|套餐到期|订阅到期|流量重置|官网地址|官方地址|更新订阅|Traffic Remaining|Expire Date)
+  empty-fallback: REJECT
+  filter: (?i)(🇯🇵|(^|[^A-Za-z])JP([^A-Za-z]|$)|日本|Japan|Tokyo|Osaka)
+  url: https://www.gstatic.com/generate_204
+  interval: 300
+  timeout: 5000
+  lazy: true
+  expected-status: 204
+  tolerance: 50
+- name: 🇺🇸 美国节点
+  type: select
+  include-all: true
+  exclude-filter: (?i)(剩余流量|到期时间|套餐到期|订阅到期|流量重置|官网地址|官方地址|更新订阅|Traffic Remaining|Expire Date)
+  empty-fallback: REJECT
+  filter: (?i)(🇺🇸|(^|[^A-Za-z])US([^A-Za-z]|$)|美国|United States|America)
+- name: 🔯 美国故转
+  type: fallback
+  include-all: true
+  exclude-filter: (?i)(剩余流量|到期时间|套餐到期|订阅到期|流量重置|官网地址|官方地址|更新订阅|Traffic Remaining|Expire Date)
+  empty-fallback: REJECT
+  filter: (?i)(🇺🇸|(^|[^A-Za-z])US([^A-Za-z]|$)|美国|United States|America)
+  url: https://www.gstatic.com/generate_204
+  interval: 300
+  timeout: 5000
+  lazy: true
+  expected-status: 204
+- name: ♻️ 美国自动
+  type: url-test
+  include-all: true
+  exclude-filter: (?i)(剩余流量|到期时间|套餐到期|订阅到期|流量重置|官网地址|官方地址|更新订阅|Traffic Remaining|Expire Date)
+  empty-fallback: REJECT
+  filter: (?i)(🇺🇸|(^|[^A-Za-z])US([^A-Za-z]|$)|美国|United States|America)
+  url: https://www.gstatic.com/generate_204
+  interval: 300
+  timeout: 5000
+  lazy: true
+  expected-status: 204
+  tolerance: 50
+- name: 🇸🇬 狮城节点
+  type: select
+  include-all: true
+  exclude-filter: (?i)(剩余流量|到期时间|套餐到期|订阅到期|流量重置|官网地址|官方地址|更新订阅|Traffic Remaining|Expire Date)
+  empty-fallback: REJECT
+  filter: (?i)(🇸🇬|(^|[^A-Za-z])SG([^A-Za-z]|$)|新加坡|狮城|Singapore)
+- name: 🔯 狮城故转
+  type: fallback
+  include-all: true
+  exclude-filter: (?i)(剩余流量|到期时间|套餐到期|订阅到期|流量重置|官网地址|官方地址|更新订阅|Traffic Remaining|Expire Date)
+  empty-fallback: REJECT
+  filter: (?i)(🇸🇬|(^|[^A-Za-z])SG([^A-Za-z]|$)|新加坡|狮城|Singapore)
+  url: https://www.gstatic.com/generate_204
+  interval: 300
+  timeout: 5000
+  lazy: true
+  expected-status: 204
+- name: ♻️ 狮城自动
+  type: url-test
+  include-all: true
+  exclude-filter: (?i)(剩余流量|到期时间|套餐到期|订阅到期|流量重置|官网地址|官方地址|更新订阅|Traffic Remaining|Expire Date)
+  empty-fallback: REJECT
+  filter: (?i)(🇸🇬|(^|[^A-Za-z])SG([^A-Za-z]|$)|新加坡|狮城|Singapore)
+  url: https://www.gstatic.com/generate_204
+  interval: 300
+  timeout: 5000
+  lazy: true
+  expected-status: 204
+  tolerance: 50
+- name: 🇹🇼 台湾节点
+  type: select
+  include-all: true
+  exclude-filter: (?i)(剩余流量|到期时间|套餐到期|订阅到期|流量重置|官网地址|官方地址|更新订阅|Traffic Remaining|Expire Date)
+  empty-fallback: REJECT
+  filter: (?i)(🇹🇼|(^|[^A-Za-z])TW([^A-Za-z]|$)|台湾|台灣|Taiwan)
+- name: 🔯 台湾故转
+  type: fallback
+  include-all: true
+  exclude-filter: (?i)(剩余流量|到期时间|套餐到期|订阅到期|流量重置|官网地址|官方地址|更新订阅|Traffic Remaining|Expire Date)
+  empty-fallback: REJECT
+  filter: (?i)(🇹🇼|(^|[^A-Za-z])TW([^A-Za-z]|$)|台湾|台灣|Taiwan)
+  url: https://www.gstatic.com/generate_204
+  interval: 300
+  timeout: 5000
+  lazy: true
+  expected-status: 204
+- name: ♻️ 台湾自动
+  type: url-test
+  include-all: true
+  exclude-filter: (?i)(剩余流量|到期时间|套餐到期|订阅到期|流量重置|官网地址|官方地址|更新订阅|Traffic Remaining|Expire Date)
+  empty-fallback: REJECT
+  filter: (?i)(🇹🇼|(^|[^A-Za-z])TW([^A-Za-z]|$)|台湾|台灣|Taiwan)
+  url: https://www.gstatic.com/generate_204
+  interval: 300
+  timeout: 5000
+  lazy: true
+  expected-status: 204
+  tolerance: 50
+- name: 🇮🇳 印度节点
+  type: select
+  include-all: true
+  exclude-filter: (?i)(剩余流量|到期时间|套餐到期|订阅到期|流量重置|官网地址|官方地址|更新订阅|Traffic Remaining|Expire Date)
+  empty-fallback: REJECT
+  filter: (?i)(🇮🇳|(^|[^A-Za-z])IN([^A-Za-z]|$)|印度|India)
+- name: 🔯 印度故转
+  type: fallback
+  include-all: true
+  exclude-filter: (?i)(剩余流量|到期时间|套餐到期|订阅到期|流量重置|官网地址|官方地址|更新订阅|Traffic Remaining|Expire Date)
+  empty-fallback: REJECT
+  filter: (?i)(🇮🇳|(^|[^A-Za-z])IN([^A-Za-z]|$)|印度|India)
+  url: https://www.gstatic.com/generate_204
+  interval: 300
+  timeout: 5000
+  lazy: true
+  expected-status: 204
+- name: ♻️ 印度自动
+  type: url-test
+  include-all: true
+  exclude-filter: (?i)(剩余流量|到期时间|套餐到期|订阅到期|流量重置|官网地址|官方地址|更新订阅|Traffic Remaining|Expire Date)
+  empty-fallback: REJECT
+  filter: (?i)(🇮🇳|(^|[^A-Za-z])IN([^A-Za-z]|$)|印度|India)
+  url: https://www.gstatic.com/generate_204
+  interval: 300
+  timeout: 5000
+  lazy: true
+  expected-status: 204
+  tolerance: 50
+- name: 🏷️ 亏本机场
+  type: select
+  include-all: true
+  exclude-filter: (?i)(剩余流量|到期时间|套餐到期|订阅到期|流量重置|官网地址|官方地址|更新订阅|Traffic Remaining|Expire Date)
+  empty-fallback: REJECT
+  filter: \[亏本机场\]
+- name: 🏷️ 赔钱机场
+  type: select
+  include-all: true
+  exclude-filter: (?i)(剩余流量|到期时间|套餐到期|订阅到期|流量重置|官网地址|官方地址|更新订阅|Traffic Remaining|Expire Date)
+  empty-fallback: REJECT
+  filter: \[赔钱机场\]
+- name: ⚡ HY2 节点
+  type: select
+  include-all: true
+  exclude-filter: (?i)(剩余流量|到期时间|套餐到期|订阅到期|流量重置|官网地址|官方地址|更新订阅|Traffic Remaining|Expire Date)
+  empty-fallback: REJECT
+  filter: (?i)(\[HY2\]|(^|[^A-Za-z0-9])(HY2|Hysteria2)([^A-Za-z0-9]|$))
+- name: 🧩 VLESS 节点
+  type: select
+  include-all: true
+  exclude-filter: (?i)(剩余流量|到期时间|套餐到期|订阅到期|流量重置|官网地址|官方地址|更新订阅|Traffic Remaining|Expire Date)
+  empty-fallback: REJECT
+  filter: (?i)(\[VLESS\]|(^|[^A-Za-z])VLESS([^A-Za-z]|$))
+- name: 🌐 全部节点
+  type: select
+  include-all: true
+  exclude-filter: (?i)(剩余流量|到期时间|套餐到期|订阅到期|流量重置|官网地址|官方地址|更新订阅|Traffic Remaining|Expire Date)
+  empty-fallback: REJECT
+rules:
+- IP-CIDR,127.0.0.0/8,DIRECT,no-resolve
+- IP-CIDR,10.0.0.0/8,DIRECT,no-resolve
+- IP-CIDR,172.16.0.0/12,DIRECT,no-resolve
+- IP-CIDR,192.168.0.0/16,DIRECT,no-resolve
+- IP-CIDR,169.254.0.0/16,DIRECT,no-resolve
+- IP-CIDR,224.0.0.0/4,DIRECT,no-resolve
+- IP-CIDR,255.255.255.255/32,DIRECT,no-resolve
+- RULE-SET,private_ip,DIRECT,no-resolve
+- RULE-SET,private_domain,DIRECT
+- RULE-SET,ai_domain,🤖 AI
+- RULE-SET,youtube_domain,📹 YouTube
+- RULE-SET,google_domain,🍀 Google
+- RULE-SET,github_domain,👨🏿‍💻 GitHub
+- RULE-SET,onedrive_domain,🐬 OneDrive
+- RULE-SET,microsoftcn_domain,DIRECT
+- RULE-SET,microsoft_domain,🪟 Microsoft
+- RULE-SET,applecn_domain,DIRECT
+- RULE-SET,apple_domain,🍎 Apple
+- RULE-SET,telegram_domain,📲 Telegram
+- RULE-SET,tiktok_domain,🎵 TikTok
+- RULE-SET,netflix_domain,🎥 NETFLIX
+- RULE-SET,paypal_domain,💶 Wallet
+- RULE-SET,binance_domain,💶 Wallet
+- RULE-SET,okx_domain,💶 Wallet
+- RULE-SET,usd_domain,💶 Wallet
+- RULE-SET,steamcn_domain,DIRECT
+- RULE-SET,steam_domain,🎮 Steam
+- RULE-SET,cn_domain,DIRECT
+- RULE-SET,cn!_domain,🚀 默认代理
+- RULE-SET,google_ip,🍀 Google
+- RULE-SET,apple_ip,🍎 Apple
+- RULE-SET,telegram_ip,📲 Telegram
+- RULE-SET,netflix_ip,🎥 NETFLIX
+- RULE-SET,cn_ip,DIRECT
+- MATCH,🐟 漏网之鱼
+rule-providers:
+  fakeipfilter_cn:
+    type: http
+    interval: 86400
+    behavior: domain
+    format: text
+    url: https://raw.githubusercontent.com/qichiyuhub/rule/refs/heads/main/rules/fakeipfilter-cn.list
+    path: ./rule_provider/qichiyuhub/fakeipfilter_cn.text
+    proxy: 🚀 默认代理
+  fakeipfilter_!cn:
+    type: http
+    interval: 86400
+    behavior: domain
+    format: text
+    url: https://raw.githubusercontent.com/qichiyuhub/rule/refs/heads/main/rules/fakeipfilter-!cn.list
+    path: ./rule_provider/qichiyuhub/fakeipfilter_!cn.text
+    proxy: 🚀 默认代理
+  private_domain:
+    type: http
+    interval: 86400
+    behavior: domain
+    format: mrs
+    url: https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/refs/heads/meta/geo/geosite/private.mrs
+    path: ./rule_provider/qichiyuhub/private_domain.mrs
+    proxy: 🚀 默认代理
+  ai_domain:
+    type: http
+    interval: 86400
+    behavior: domain
+    format: mrs
+    url: https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/refs/heads/meta/geo/geosite/category-ai-!cn.mrs
+    path: ./rule_provider/qichiyuhub/ai_domain.mrs
+    proxy: 🚀 默认代理
+  youtube_domain:
+    type: http
+    interval: 86400
+    behavior: domain
+    format: mrs
+    url: https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/refs/heads/meta/geo/geosite/youtube.mrs
+    path: ./rule_provider/qichiyuhub/youtube_domain.mrs
+    proxy: 🚀 默认代理
+  google_domain:
+    type: http
+    interval: 86400
+    behavior: domain
+    format: mrs
+    url: https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/refs/heads/meta/geo/geosite/google.mrs
+    path: ./rule_provider/qichiyuhub/google_domain.mrs
+    proxy: 🚀 默认代理
+  github_domain:
+    type: http
+    interval: 86400
+    behavior: domain
+    format: mrs
+    url: https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/refs/heads/meta/geo/geosite/github.mrs
+    path: ./rule_provider/qichiyuhub/github_domain.mrs
+    proxy: 🚀 默认代理
+  onedrive_domain:
+    type: http
+    interval: 86400
+    behavior: domain
+    format: mrs
+    url: https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/refs/heads/meta/geo/geosite/onedrive.mrs
+    path: ./rule_provider/qichiyuhub/onedrive_domain.mrs
+    proxy: 🚀 默认代理
+  microsoftcn_domain:
+    type: http
+    interval: 86400
+    behavior: domain
+    format: mrs
+    url: https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/refs/heads/meta/geo/geosite/microsoft@cn.mrs
+    path: ./rule_provider/qichiyuhub/microsoftcn_domain.mrs
+    proxy: 🚀 默认代理
+  microsoft_domain:
+    type: http
+    interval: 86400
+    behavior: domain
+    format: mrs
+    url: https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/refs/heads/meta/geo/geosite/microsoft.mrs
+    path: ./rule_provider/qichiyuhub/microsoft_domain.mrs
+    proxy: 🚀 默认代理
+  applecn_domain:
+    type: http
+    interval: 86400
+    behavior: domain
+    format: mrs
+    url: https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/refs/heads/meta/geo/geosite/apple@cn.mrs
+    path: ./rule_provider/qichiyuhub/applecn_domain.mrs
+    proxy: 🚀 默认代理
+  apple_domain:
+    type: http
+    interval: 86400
+    behavior: domain
+    format: mrs
+    url: https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/refs/heads/meta/geo/geosite/apple.mrs
+    path: ./rule_provider/qichiyuhub/apple_domain.mrs
+    proxy: 🚀 默认代理
+  telegram_domain:
+    type: http
+    interval: 86400
+    behavior: domain
+    format: mrs
+    url: https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/refs/heads/meta/geo/geosite/telegram.mrs
+    path: ./rule_provider/qichiyuhub/telegram_domain.mrs
+    proxy: 🚀 默认代理
+  tiktok_domain:
+    type: http
+    interval: 86400
+    behavior: domain
+    format: mrs
+    url: https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/refs/heads/meta/geo/geosite/tiktok.mrs
+    path: ./rule_provider/qichiyuhub/tiktok_domain.mrs
+    proxy: 🚀 默认代理
+  netflix_domain:
+    type: http
+    interval: 86400
+    behavior: domain
+    format: mrs
+    url: https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/refs/heads/meta/geo/geosite/netflix.mrs
+    path: ./rule_provider/qichiyuhub/netflix_domain.mrs
+    proxy: 🚀 默认代理
+  paypal_domain:
+    type: http
+    interval: 86400
+    behavior: domain
+    format: mrs
+    url: https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/refs/heads/meta/geo/geosite/paypal.mrs
+    path: ./rule_provider/qichiyuhub/paypal_domain.mrs
+    proxy: 🚀 默认代理
+  binance_domain:
+    type: http
+    interval: 86400
+    behavior: domain
+    format: mrs
+    url: https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/refs/heads/meta/geo/geosite/binance.mrs
+    path: ./rule_provider/qichiyuhub/binance_domain.mrs
+    proxy: 🚀 默认代理
+  okx_domain:
+    type: http
+    interval: 86400
+    behavior: domain
+    format: mrs
+    url: https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/refs/heads/meta/geo/geosite/okx.mrs
+    path: ./rule_provider/qichiyuhub/okx_domain.mrs
+    proxy: 🚀 默认代理
+  usd_domain:
+    type: http
+    interval: 86400
+    behavior: domain
+    format: mrs
+    url: https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/refs/heads/meta/geo/geosite/category-cryptocurrency.mrs
+    path: ./rule_provider/qichiyuhub/usd_domain.mrs
+    proxy: 🚀 默认代理
+  steamcn_domain:
+    type: http
+    interval: 86400
+    behavior: domain
+    format: mrs
+    url: https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/refs/heads/meta/geo/geosite/steam@cn.mrs
+    path: ./rule_provider/qichiyuhub/steamcn_domain.mrs
+    proxy: 🚀 默认代理
+  steam_domain:
+    type: http
+    interval: 86400
+    behavior: domain
+    format: mrs
+    url: https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/refs/heads/meta/geo/geosite/steam.mrs
+    path: ./rule_provider/qichiyuhub/steam_domain.mrs
+    proxy: 🚀 默认代理
+  cn!_domain:
+    type: http
+    interval: 86400
+    behavior: domain
+    format: mrs
+    url: https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/refs/heads/meta/geo/geosite/geolocation-!cn.mrs
+    path: ./rule_provider/qichiyuhub/cn!_domain.mrs
+    proxy: 🚀 默认代理
+  cn_domain:
+    type: http
+    interval: 86400
+    behavior: domain
+    format: mrs
+    url: https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/refs/heads/meta/geo/geosite/cn.mrs
+    path: ./rule_provider/qichiyuhub/cn_domain.mrs
+    proxy: 🚀 默认代理
+  google_ip:
+    type: http
+    interval: 86400
+    behavior: ipcidr
+    format: mrs
+    url: https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/refs/heads/meta/geo/geoip/google.mrs
+    path: ./rule_provider/qichiyuhub/google_ip.mrs
+    proxy: 🚀 默认代理
+  apple_ip:
+    type: http
+    interval: 86400
+    behavior: ipcidr
+    format: mrs
+    url: https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/refs/heads/meta/geo-lite/geoip/apple.mrs
+    path: ./rule_provider/qichiyuhub/apple_ip.mrs
+    proxy: 🚀 默认代理
+  telegram_ip:
+    type: http
+    interval: 86400
+    behavior: ipcidr
+    format: mrs
+    url: https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/refs/heads/meta/geo/geoip/telegram.mrs
+    path: ./rule_provider/qichiyuhub/telegram_ip.mrs
+    proxy: 🚀 默认代理
+  netflix_ip:
+    type: http
+    interval: 86400
+    behavior: ipcidr
+    format: mrs
+    url: https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/refs/heads/meta/geo/geoip/netflix.mrs
+    path: ./rule_provider/qichiyuhub/netflix_ip.mrs
+    proxy: 🚀 默认代理
+  cn_ip:
+    type: http
+    interval: 86400
+    behavior: ipcidr
+    format: mrs
+    url: https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/refs/heads/meta/geo/geoip/cn.mrs
+    path: ./rule_provider/qichiyuhub/cn_ip.mrs
+    proxy: 🚀 默认代理
+  private_ip:
+    type: http
+    interval: 86400
+    behavior: ipcidr
+    format: mrs
+    url: https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/refs/heads/meta/geo/geoip/private.mrs
+    path: ./rule_provider/qichiyuhub/private_ip.mrs
+    proxy: 🚀 默认代理
