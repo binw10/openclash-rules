@@ -52,7 +52,7 @@ sniffer:
   - +.push.apple.com
 tun:
   enable: false
-  stack: mips
+  stack: mixed
   auto-route: false
   auto-redirect: false
   auto-detect-interface: false
@@ -1018,3 +1018,5 @@ rule-providers:
     url: https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/refs/heads/meta/geo/geosite/twitter.mrs
     path: ./rule_provider/qichiyuhub/twitter_domain.mrs
     proxy: 🚀 默认代理
+
+# 2026-10-15：为兼容 macOS FlClash，将 TUN stack 改回 mixed。
