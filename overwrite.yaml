@@ -13,6 +13,7 @@
 # 本文件不设置 external-ui / external-ui-url，由 OpenClash 管理面板。
 # Gemini 独立分流：网页、API、AI Studio；优先于通用 AI / Google 规则。
 # 2026-10-15：新增 X / Twitter 独立策略组，采用 MetaCubeX twitter.mrs 规则集。
+# 2026-10-16：Gemini / X 需要真实解析时，海外 DoH 经各自策略组连接；其他 DNS 行为保持原样。
 mode: rule
 mixed-port: 7890
 allow-lan: true
@@ -95,6 +96,12 @@ dns:
   - https://1.1.1.1/dns-query#🚀 默认代理
   - https://8.8.8.8/dns-query#🚀 默认代理
   nameserver-policy:
+    rule-set:gemini_domain:
+    - https://1.1.1.1/dns-query#✨ Gemini
+    - https://8.8.8.8/dns-query#✨ Gemini
+    rule-set:twitter_domain:
+    - https://1.1.1.1/dns-query#𝕏 X / Twitter
+    - https://8.8.8.8/dns-query#𝕏 X / Twitter
     rule-set:cn_domain,private_domain:
     - https://dns.alidns.com/dns-query
     - https://doh.pub/dns-query
@@ -1018,5 +1025,3 @@ rule-providers:
     url: https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/refs/heads/meta/geo/geosite/twitter.mrs
     path: ./rule_provider/qichiyuhub/twitter_domain.mrs
     proxy: 🚀 默认代理
-
-# 2026-10-15：为兼容 macOS FlClash，将 TUN stack 改回 mixed。
